@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      // Load the Google API Client Library for JavaScript
+      gapi.load("client:auth2", function () {
+        // Initialize the API client library
+        gapi.client
+          .init({
+            apiKey: "YOUR_API_KEY",
+            clientId: "YOUR_CLIENT_ID",
+            discoveryDocs: [
+              "https://www.googleapis.com/discovery/v1/apis/analyticsreporting/v4/rest",
+            ],
+            scope: "https://www.googleapis.com/auth/analytics.readonly",
+          })
+          .then(function () {
+            // Authorize the user
+            return gapi.auth2.getAuthInstance().signIn();
+          })
+          .then(function () {
+            // Call the Analytics Reporting API
+            return gapi.client.analyticsreporting.reports.batchGet({
+              reportRequests: [
+                {
+                  viewId: "YOUR_VIEW_ID",
+                  dateRanges: [
+                    {
+                      startDate: "7daysAgo",
+                      endDate: "today",
+                    },
+                  ],
+                  metrics: [
+                    {
+                      expression: "ga:sessions",
+                    },
+                  ],
+                },
+              ],
+            });
+          })
+          .then(
+            function (response) {
+              // Handle the response
+              console.log(response);
+            },
+            function (error) {
+              // Handle the error
+              console.error(error);
+            }
+          );
+      });
+    </script>
+  </body>
+</html>
